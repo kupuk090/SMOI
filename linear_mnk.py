@@ -10,14 +10,17 @@ eta_params = np.array([[0.0, 0.5]])
 experiments_count = 10000
 
 
+# создаёт столбец Y для уравнения объекта
 def create_Y_object(U_matr, b_vec, eta_vec):
     return np.matrix((create_Y_model(U_matr, b_vec) + eta_vec).reshape((U_matr.shape[0], 1)))
 
 
+# создаёт столбец Y для уравнения модели
 def create_Y_model(U_matr, b_vec):
     return np.matrix((U_matr @ b_vec[1:].T + b_vec[0]).reshape((U_matr.shape[0], 1)))
 
 
+# осуществляет вычисление средних значений входов и выходов
 def cp_calc(U_matr, b_vec, eta_vec):
     y = create_Y_object(U_matr, b_vec, eta_vec)
     N = y.shape[0]
@@ -29,6 +32,7 @@ def cp_calc(U_matr, b_vec, eta_vec):
     return [y_cp, np.matrix(U_cp)]
 
 
+# осуществоляет вычисление параметров уравнения облъекта в центрированной форме
 def centrificate(U_matr, b_vec, eta_vec):
     [y_cp, U_cp] = cp_calc(U, b_vector, eta)
     y = create_Y_object(U_matr, b_vec, eta_vec)
@@ -39,6 +43,7 @@ def centrificate(U_matr, b_vec, eta_vec):
     return [y_0, U_0]
 
 
+# создаёт матрицу входов с заданными параметрами
 def create_U(u_par, count):
     res = np.array([])
     for k in range(count):
@@ -49,6 +54,7 @@ def create_U(u_par, count):
     return np.matrix(res.reshape(count, len(u_par)))
 
 
+# создаёт матрицу шумов с заданными параметрами
 def create_eta(eta_par, count):
     res = np.array([])
     for k in range(count):
@@ -59,6 +65,7 @@ def create_eta(eta_par, count):
     return np.matrix(res.reshape(count, len(eta_par)))
 
 
+# осуществляет вычисление оценок вектора b для центрированной формы уравнения объекта
 def solver(U_matr, y_vec):
     b_tmp = np.linalg.inv(U_matr.T @ U_matr) @ U_matr.T @ y_vec
 
@@ -68,6 +75,7 @@ def solver(U_matr, y_vec):
     return np.matrix(np.vstack((b_0, b_tmp)))
 
 
+# осуществляет полное решение
 def full_solver(u_par, eta_par, b_vec, count):
     global U
     global eta
